@@ -3,10 +3,12 @@ package main;
 import java.util.Random;
 
 public class Runner {
+	static forestSquare[] friends;
 	public static void main(String[] args) { //imagine we can condition on which problem they do and pipe in corresponding parsing....
 		HideSeekParser MaxWritesThis = new HideSeekParser();
 		forestSquare[][] board = MaxWritesThis.makeBoard("sampleForest.txt");
 		System.out.println("made board");
+		friends=new forestSquare[board.length];
 		printGrid(board);
 		System.out.println("randomly placing friends");
 		randomlyInsertFriends(board);
@@ -14,6 +16,11 @@ public class Runner {
 		System.out.println();
 		System.out.println();
 		printGrid(board);
+		LocalSearcher L= new LocalSearcher(board,friends);
+		L.search();
+		System.out.println("here is the new board!");
+		printGrid(L.board);
+		
 	}
 	//RUNS THE RISK OF SMASHING INTO A TREE FOREVER
 	public static void randomlyInsertFriends(forestSquare[][] forest){
@@ -26,6 +33,7 @@ public class Runner {
 					if(forest[row][col].value=='E'){
 						System.out.println("found one!");
 						forest[row][col].value='F';
+						friends[row]=forest[row][col];
 						break;
 					}
 				}break;
