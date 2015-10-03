@@ -14,7 +14,7 @@ public class Main
 		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
 		printBoard(board);
 		MinimaxSearch victory = new MinimaxSearch(new Player('B'),new Player('G'),board);
-		while(!victory.gameOver())
+		while(!victory.gameOver(board))
 		{
 		in.next();
 		victory.playOneMove(2);

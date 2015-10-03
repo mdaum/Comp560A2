@@ -23,7 +23,7 @@ public class MinimaxSearch
 	public ArrayList<ArrayList<CandyNode>> depthLimitedSearch(int depth)
 	{
 		System.out.println("Entering search...");
-		while(!gameOver())
+		while(!gameOver(board))
 		{
 			ArrayList<ArrayList<CandyNode>> boardState = deepCloneBoard(board);
 			if(blueTurn)
@@ -108,7 +108,7 @@ public class MinimaxSearch
 	
 	public int maxValue(ArrayList<ArrayList<CandyNode>> boardState,int depth)
 	{
-		if(gameOver())
+		if(gameOver(boardState))
 		{
 			return utility(boardState);
 		}
@@ -143,7 +143,7 @@ public class MinimaxSearch
 	
 	public int minValue(ArrayList<ArrayList<CandyNode>> boardState,int depth)
 	{
-		if(gameOver())
+		if(gameOver(boardState))
 		{
 			return utility(boardState);
 		}
@@ -234,14 +234,14 @@ public class MinimaxSearch
 		return cloneBoard;
 	}
 	
-	public boolean gameOver()
+	public boolean gameOver(ArrayList<ArrayList<CandyNode>> boardState)
 	{
 		boolean gameOver = true;
 		for(int i = 0;i < 6;i++)
 		{
 			for(int j = 0;j < 6;j++)
 			{
-				if(board.get(i).get(j).getOwner() == '\0')
+				if(boardState.get(i).get(j).getOwner() == '\0')
 				{
 					gameOver = false;
 				}
