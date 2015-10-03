@@ -9,7 +9,7 @@ public class Main
 	
 	public static void main(String args[])
 	{
-		final String fileName = "Bit-O-Honey.txt";
+		final String fileName = "Mounds.txt";
 		Scanner in = new Scanner(System.in);
 		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
 		printBoard(board);

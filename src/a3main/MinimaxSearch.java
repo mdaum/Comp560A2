@@ -189,6 +189,10 @@ public class MinimaxSearch
 				{
 					utility += boardState.get(i).get(j).getValue();
 				}
+				if(boardState.get(i).get(j).getOwner() == minPlayer)
+				{
+					utility -= boardState.get(i).get(j).getValue();
+				}
 			}
 		}
 		return utility;
@@ -205,6 +209,10 @@ public class MinimaxSearch
 				if(boardState.get(i).get(j).getOwner() == maxPlayer)
 				{
 					utility += boardState.get(i).get(j).getValue();
+				}
+				if(boardState.get(i).get(j).getOwner() == minPlayer)
+				{
+					utility -= boardState.get(i).get(j).getValue();
 				}
 			}
 		}
