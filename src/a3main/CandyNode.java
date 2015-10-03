@@ -38,6 +38,7 @@ public class CandyNode
 	public void setOwner(char owner)
 	{
 		this.owner = owner;
+		this.displayValue = owner + "";
 	}
 	
 	public String getDisplayValue()

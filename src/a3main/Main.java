@@ -9,15 +9,23 @@ public class Main
 	
 	public static void main(String args[])
 	{
-		final String fileName = "Ayds.txt";
-		
+		final String fileName = "Bit-O-Honey.txt";
+		Scanner in = new Scanner(System.in);
 		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
 		printBoard(board);
+		MinimaxSearch victory = new MinimaxSearch(new Player('B'),new Player('G'),board);
+		while(!victory.gameOver())
+		{
+		in.next();
+		victory.playOneMove(2);
+		printBoard(board);
+		System.out.println(board.get(5).get(5).getOwner());
+		}
 	}
 	
 	public static ArrayList<ArrayList<CandyNode>> parseFile(String fileName)
 	{
-		Scanner in = null;;
+		Scanner in = null;
 		try 
 		{
 			in = new Scanner(new File(fileName));
@@ -27,24 +35,17 @@ public class Main
 			e.printStackTrace();
 			return null;
 		}
-
-		int height = 0; //current height of the board, 0-based index
+		
 		ArrayList<ArrayList<CandyNode>> board = new ArrayList<ArrayList<CandyNode>>();
-		while(in.hasNextLine())
+		
+		for(int i = 0;i < 6;i++)
 		{
-			String line = in.nextLine();
 			board.add(new ArrayList<CandyNode>());
-			Scanner lineScanner = new Scanner(line);
-			int width = 0;
-			
-			while(lineScanner.hasNextInt())
+			for(int j = 0;j < 6;j++)
 			{
-				board.get(height).add(new CandyNode(height,width,lineScanner.nextInt()));
-				width++;
+				int value = in.nextInt();
+				board.get(i).add(new CandyNode(i,j,value));
 			}
-			
-			line = in.nextLine();
-			height++;
 		}
 		
 		return board;
@@ -56,7 +57,14 @@ public class Main
 		{
 			for(int j = 0;j < board.get(0).size();j++)
 			{
-				System.out.print(board.get(i).get(j).getDisplayValue() + " ");
+				if(board.get(i).get(j).getDisplayValue().length() == 2)
+				{
+					System.out.print(board.get(i).get(j).getDisplayValue() + " ");
+				}
+				else
+				{
+					System.out.print(board.get(i).get(j).getDisplayValue() + "  ");
+				}
 			}
 			System.out.println();
 		}
