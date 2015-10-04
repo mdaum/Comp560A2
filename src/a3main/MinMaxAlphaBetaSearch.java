@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class MinMaxAlphaBetaSearch 
 {
+	public int numNodesExpanded = 0;
 	public int count = 0;
 	private Player blue,green;
 	public ArrayList<ArrayList<CandyNode>> board;
@@ -11,6 +12,8 @@ public class MinMaxAlphaBetaSearch
 	
 	public char maxPlayer;
 	public char minPlayer;
+	public int numMoves = 0;
+	public long timeExpired = 0;
 	
 	public MinMaxAlphaBetaSearch(Player blue, Player green, ArrayList<ArrayList<CandyNode>> board)
 	{
@@ -18,6 +21,7 @@ public class MinMaxAlphaBetaSearch
 		this.green = green;
 		this.board = board;
 		this.blueTurn = true;
+		this.numNodesExpanded = 0;
 	}
 	
 	public ArrayList<ArrayList<CandyNode>> depthLimitedSearch(int depth)
@@ -36,12 +40,19 @@ public class MinMaxAlphaBetaSearch
 				maxPlayer = green.getName();
 				minPlayer = blue.getName();
 			}
+			long beginningTime = System.currentTimeMillis();
 			CandyNode decision = minimaxDecision(boardState,depth);
-			System.out.println("Decision to make move at " + decision.getColumn() + " , " + decision.getRow());
+			long endTime = System.currentTimeMillis();
+			timeExpired += endTime - beginningTime;
+			
+			numMoves++;
+			System.out.println(maxPlayer + ": drop at " + (char)((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
 			
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
 			blueTurn = !blueTurn;
 		}
+		blue.setTotalScore(calculateScore(blue.getName()));
+		green.setTotalScore(calculateScore(green.getName()));
 		return null;
 	}
 	
@@ -87,6 +98,14 @@ public class MinMaxAlphaBetaSearch
 			for(int j = 0;j < board.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
+				if(maxPlayer == blue.getName())
+				{
+					blue.numNodesExpanded++;
+				}
+				else
+				{
+					green.numNodesExpanded++;
+				}
 				if(action.getOwner() == '\0')
 				{
 					ArrayList<ArrayList<CandyNode>> nextBoardState = deepCloneBoard(boardState);
@@ -130,6 +149,14 @@ public class MinMaxAlphaBetaSearch
 			for(int j = 0;j < boardState.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
+				if(maxPlayer == blue.getName())
+				{
+					blue.numNodesExpanded++;
+				}
+				else
+				{
+					green.numNodesExpanded++;
+				}
 				if(action.getOwner() == '\0')
 				{
 					ArrayList<ArrayList<CandyNode>> nextBoardState = deepCloneBoard(boardState);
@@ -168,6 +195,14 @@ public class MinMaxAlphaBetaSearch
 			for(int j = 0;j < boardState.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
+				if(minPlayer == blue.getName())
+				{
+					blue.numNodesExpanded++;
+				}
+				else
+				{
+					green.numNodesExpanded++;
+				}
 				if(action.getOwner() == '\0')
 				{
 					ArrayList<ArrayList<CandyNode>> nextBoardState = deepCloneBoard(boardState);
@@ -207,7 +242,7 @@ public class MinMaxAlphaBetaSearch
 	}
 
 	//NOTE: Utilities calculated from MAX's perspective
-	public int estimatedUtility(ArrayList<ArrayList<CandyNode>> boardState)
+	public int estimatedUtility(ArrayList<ArrayList<CandyNode>> boardState) // SAFE
 	{
 		int utility = 0;
 		for(int i = 0;i < boardState.size();i++)
@@ -226,6 +261,26 @@ public class MinMaxAlphaBetaSearch
 		}
 		return utility;
 	}
+	/*public int estimatedUtility(ArrayList<ArrayList<CandyNode>> boardState)
+	{
+		int utility = 0;
+		for(int i = 0;i < boardState.size();i++)
+		{
+			for(int j = 0;j < boardState.get(0).size();j++)
+			{
+				if(boardState.get(i).get(j).getOwner() == maxPlayer)
+				{
+					utility += boardState.get(i).get(j).getValue();
+				}
+				if(boardState.get(i).get(j).getOwner() == minPlayer)
+				{
+					utility -= boardState.get(i).get(j).getValue();
+				}
+				if(boardState.get(i).get(j).getOwner()=='\0') utility+=infectionValue(boardState,boardState.get(i).get(j));
+			}
+		}
+		return utility;
+	}*/
 	
 	public ArrayList<ArrayList<CandyNode>> deepCloneBoard(ArrayList<ArrayList<CandyNode>> board)
 	{
@@ -282,7 +337,7 @@ public class MinMaxAlphaBetaSearch
 		}
 		if(column+1 < board.get(0).size())
 		{
-			adjacentEnemy = ((board.get(row).get(column-1).getOwner() != node.getOwner())&&board.get(row).get(column-1).getOwner()!='\0');
+			adjacentEnemy = ((board.get(row).get(column+1).getOwner() != node.getOwner())&&board.get(row).get(column+1).getOwner()!='\0');
 			if(adjacentEnemy)
 			{
 				return adjacentEnemy;
@@ -290,7 +345,7 @@ public class MinMaxAlphaBetaSearch
 		}
 		if(row-1 >= 0)
 		{
-			adjacentEnemy = ((board.get(row).get(column-1).getOwner() != node.getOwner())&&board.get(row).get(column-1).getOwner()!='\0');
+			adjacentEnemy = ((board.get(row-1).get(column).getOwner() != node.getOwner())&&board.get(row-1).get(column).getOwner()!='\0');
 			if(adjacentEnemy)
 			{
 				return adjacentEnemy;
@@ -298,7 +353,7 @@ public class MinMaxAlphaBetaSearch
 		}
 		if(row+1 < board.size())
 		{
-			adjacentEnemy = ((board.get(row).get(column-1).getOwner() != node.getOwner())&&board.get(row).get(column-1).getOwner()!='\0');
+			adjacentEnemy = ((board.get(row+1).get(column).getOwner() != node.getOwner())&&board.get(row+1).get(column).getOwner()!='\0');
 			if(adjacentEnemy)
 			{
 				return adjacentEnemy;
@@ -374,7 +429,49 @@ public class MinMaxAlphaBetaSearch
 			board.get(row+1).get(column).setOwner(node.getOwner());
 		}
 	}
-	public int infectionValue(){
-		return 0;
+	
+	public int infectionValue(ArrayList<ArrayList<CandyNode>> boardState, CandyNode node){
+		int curr=0;
+		int row=node.getRow();
+		int column = node.getColumn();
+		if(adjacentFriendlyCandy(boardState,node)&&adjacentEnemyCandy(boardState,node)){
+			if(column - 1 >= 0 && board.get(row).get(column-1).getOwner() != '\0')
+			{
+				if(board.get(row).get(column-1).getOwner()==maxPlayer)curr-=board.get(row).get(column-1).getValue();
+				else curr+=board.get(row).get(column-1).getValue();
+			}
+			if(column + 1 < board.get(0).size() && board.get(row).get(column+1).getOwner() != '\0')
+			{
+				if(board.get(row).get(column+1).getOwner()==maxPlayer)curr-=board.get(row).get(column+1).getValue();
+				else curr+=board.get(row).get(column+1).getValue();
+			}
+			if(row-1 >= 0 &&  board.get(row-1).get(column).getOwner() != '\0')
+			{
+				if(board.get(row-1).get(column).getOwner()==maxPlayer)curr-=board.get(row-1).get(column).getValue();
+				else curr+=board.get(row-1).get(column).getValue();
+			}
+			if(row + 1 < board.size() && board.get(row+1).get(column).getOwner() != '\0')
+			{
+				if(board.get(row+1).get(column).getOwner()==maxPlayer)curr-=board.get(row+1).get(column).getValue();
+				else curr+=board.get(row+1).get(column).getValue();
+			}
+		}
+		return curr;
+	}
+	
+	public int calculateScore(char name)
+	{
+		int sum = 0;
+		for(int i = 0;i < board.size();i++)
+		{
+			for(int j = 0;j < board.get(0).size();j++)
+			{
+				if(board.get(i).get(j).getOwner() == name)
+				{
+					sum += board.get(i).get(j).getValue();
+				}
+			}
+		}
+		return sum;
 	}
 }

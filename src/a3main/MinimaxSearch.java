@@ -246,6 +246,26 @@ public class MinimaxSearch
 		}
 		return utility;
 	}
+	/*public int estimatedUtility(ArrayList<ArrayList<CandyNode>> boardState)
+	{
+		int utility = 0;
+		for(int i = 0;i < boardState.size();i++)
+		{
+			for(int j = 0;j < boardState.get(0).size();j++)
+			{
+				if(boardState.get(i).get(j).getOwner() == maxPlayer)
+				{
+					utility += boardState.get(i).get(j).getValue();
+				}
+				if(boardState.get(i).get(j).getOwner() == minPlayer)
+				{
+					utility -= boardState.get(i).get(j).getValue();
+				}
+				if(boardState.get(i).get(j).getOwner()=='\0') utility+=infectionValue(boardState,boardState.get(i).get(j));
+			}
+		}
+		return utility;
+	}*/
 	
 	public ArrayList<ArrayList<CandyNode>> deepCloneBoard(ArrayList<ArrayList<CandyNode>> board)
 	{
@@ -350,6 +370,76 @@ public class MinimaxSearch
 		{
 			board.get(row+1).get(column).setOwner(node.getOwner());
 		}
+	}
+	public int infectionValue(ArrayList<ArrayList<CandyNode>> boardState, CandyNode node){
+		int curr=0;
+		int row=node.getRow();
+		int column = node.getColumn();
+		if(adjacentFriendlyCandy(boardState,node)&&adjacentEnemyCandy(boardState,node)){
+			if(column - 1 >= 0 && board.get(row).get(column-1).getOwner() != '\0')
+			{
+				if(board.get(row).get(column-1).getOwner()==maxPlayer)curr-=board.get(row).get(column-1).getValue();
+				else curr+=board.get(row).get(column-1).getValue();
+			}
+			if(column + 1 < board.get(0).size() && board.get(row).get(column+1).getOwner() != '\0')
+			{
+				if(board.get(row).get(column+1).getOwner()==maxPlayer)curr-=board.get(row).get(column+1).getValue();
+				else curr+=board.get(row).get(column+1).getValue();
+			}
+			if(row-1 >= 0 &&  board.get(row-1).get(column).getOwner() != '\0')
+			{
+				if(board.get(row-1).get(column).getOwner()==maxPlayer)curr-=board.get(row-1).get(column).getValue();
+				else curr+=board.get(row-1).get(column).getValue();
+			}
+			if(row + 1 < board.size() && board.get(row+1).get(column).getOwner() != '\0')
+			{
+				if(board.get(row+1).get(column).getOwner()==maxPlayer)curr-=board.get(row+1).get(column).getValue();
+				else curr+=board.get(row+1).get(column).getValue();
+			}
+		}
+		return curr;
+	}
+	public boolean adjacentEnemyCandy(ArrayList<ArrayList<CandyNode>> board, CandyNode node){
+		int row = node.getRow();
+		int column = node.getColumn();
+		
+		//System.out.println(node.getOwner());
+		boolean adjacentEnemy = false;
+		
+		if(column - 1 >= 0)
+		{
+			adjacentEnemy = ((board.get(row).get(column-1).getOwner() != node.getOwner())&&board.get(row).get(column-1).getOwner()!='\0');
+			if(adjacentEnemy)
+			{
+				return adjacentEnemy;
+			}
+		}
+		if(column+1 < board.get(0).size())
+		{
+			adjacentEnemy = ((board.get(row).get(column+1).getOwner() != node.getOwner())&&board.get(row).get(column+1).getOwner()!='\0');
+			if(adjacentEnemy)
+			{
+				return adjacentEnemy;
+			}
+		}
+		if(row-1 >= 0)
+		{
+			adjacentEnemy = ((board.get(row-1).get(column).getOwner() != node.getOwner())&&board.get(row-1).get(column).getOwner()!='\0');
+			if(adjacentEnemy)
+			{
+				return adjacentEnemy;
+			}
+		}
+		if(row+1 < board.size())
+		{
+			adjacentEnemy = ((board.get(row+1).get(column).getOwner() != node.getOwner())&&board.get(row+1).get(column).getOwner()!='\0');
+			if(adjacentEnemy)
+			{
+				return adjacentEnemy;
+			}
+		}
+		
+		return adjacentEnemy;
 	}
 	
 	public int calculateScore(char name)

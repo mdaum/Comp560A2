@@ -12,11 +12,16 @@ public class Main
 		final String fileName = "Mounds.txt";
 		Scanner in = new Scanner(System.in);
 		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
+		System.out.println("Regular Minimax Search at depth 3:");
 		printBoard(board);
 		Player blue = new Player('B');
 		Player green = new Player('G');
+		Player trueblue = new Player('B');
+		Player truegreen = new Player('G');
 		MinimaxSearch victory = new MinimaxSearch(blue,green,board);
-		victory.depthLimitedSearch(3);
+		ArrayList<ArrayList<CandyNode>> trueboard = victory.deepCloneBoard(board);
+		MinMaxAlphaBetaSearch trueVictory = new MinMaxAlphaBetaSearch(trueblue,truegreen,trueboard);
+		victory.depthLimitedSearch(2);
 		printBoard(board);
 		System.out.println("Blue's score is: " +blue.getTotalScore());
 		System.out.println("Green's score is: " + green.getTotalScore());
@@ -24,6 +29,31 @@ public class Main
 		System.out.println("Number of nodes expanded by Green is " + green.numNodesExpanded);
 		System.out.println("Average number of nodes expanded per move is " + ((double)(blue.numNodesExpanded + green.numNodesExpanded))/(double)(victory.numMoves));
 		System.out.println("Average number of time taken per move is " + (double)(victory.timeExpired/1000)/(double)(victory.numMoves) + " seconds");
+		System.out.println("Alpha Beta at depth 4:");
+		printBoard(trueboard);
+		trueVictory.depthLimitedSearch(2);
+		printBoard(trueboard);
+		System.out.println("Blue's score is: " +trueblue.getTotalScore());
+		System.out.println("Green's score is: " + truegreen.getTotalScore());
+		System.out.println("Number of nodes expanded by Blue is " + trueblue.numNodesExpanded);
+		System.out.println("Number of nodes expanded by Green is " + truegreen.numNodesExpanded);
+		System.out.println("Average number of nodes expanded per move is " + ((double)(trueblue.numNodesExpanded + truegreen.numNodesExpanded))/(double)(trueVictory.numMoves));
+		System.out.println("Average number of time taken per move is " + (double)(trueVictory.timeExpired/1000)/(double)(trueVictory.numMoves) + " seconds");
+		/*while(!victory.gameOver(board))
+		{
+		in.next();
+		victory.playOneMove(2);
+		printBoard(board);
+		System.out.println(board.get(5).get(5).getOwner());
+		}*/
+
+		/*while(!victory.gameOver(board))
+		{
+		in.next();
+		victory.playOneMove(2);
+		printBoard(board);
+		System.out.println(board.get(5).get(5).getOwner());
+		}*/
 		/*while(!victory.gameOver(board))
 		{
 		in.next();
