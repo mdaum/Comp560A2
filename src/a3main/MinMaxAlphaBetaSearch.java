@@ -375,6 +375,6 @@ public class MinMaxAlphaBetaSearch
 		}
 	}
 	public int infectionValue(){
-		return null;
+		return 0;
 	}
 }
