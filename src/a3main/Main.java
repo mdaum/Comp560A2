@@ -14,13 +14,15 @@ public class Main
 		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
 		printBoard(board);
 		MinimaxSearch victory = new MinimaxSearch(new Player('B'),new Player('G'),board);
-		while(!victory.gameOver(board))
+		victory.depthLimitedSearch(2);
+		printBoard(board);
+		/*while(!victory.gameOver(board))
 		{
 		in.next();
 		victory.playOneMove(2);
 		printBoard(board);
 		System.out.println(board.get(5).get(5).getOwner());
-		}
+		}*/
 	}
 	
 	public static ArrayList<ArrayList<CandyNode>> parseFile(String fileName)

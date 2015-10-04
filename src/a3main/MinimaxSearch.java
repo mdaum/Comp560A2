@@ -37,7 +37,7 @@ public class MinimaxSearch
 				minPlayer = blue.getName();
 			}
 			CandyNode decision = minimaxDecision(boardState,depth);
-			System.out.println("Decision to make move at " + decision.getColumn() + " , " + decision.getRow());
+			System.out.println(maxPlayer + ": drop at " + (char)((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
 			
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
 			blueTurn = !blueTurn;
@@ -60,7 +60,7 @@ public class MinimaxSearch
 			minPlayer = blue.getName();
 		}
 		CandyNode decision = minimaxDecision(boardState,depth);
-		System.out.println("Decision to make move at " + decision.getColumn() + " , " + decision.getRow());
+		System.out.println(maxPlayer + ": drop at " + ((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
 		if(decision != null)
 		{
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
@@ -76,7 +76,6 @@ public class MinimaxSearch
 	
 	public CandyNode minimaxDecision(ArrayList<ArrayList<CandyNode>> boardState,int depth)
 	{
-		System.out.println(maxPlayer);
 		CandyNode chosenOne = null;
 
 		int maxVal = Integer.MIN_VALUE;
@@ -189,6 +188,7 @@ public class MinimaxSearch
 				{
 					utility += boardState.get(i).get(j).getValue();
 				}
+				//Changed utility measurement here
 				if(boardState.get(i).get(j).getOwner() == minPlayer)
 				{
 					utility -= boardState.get(i).get(j).getValue();
@@ -210,6 +210,7 @@ public class MinimaxSearch
 				{
 					utility += boardState.get(i).get(j).getValue();
 				}
+				//Changed utility measurement here
 				if(boardState.get(i).get(j).getOwner() == minPlayer)
 				{
 					utility -= boardState.get(i).get(j).getValue();
@@ -305,8 +306,6 @@ public class MinimaxSearch
 	{
 		int row = node.getRow();
 		int column = node.getColumn();
-		
-		System.out.println(node.getOwner());
 		
 		if(column - 1 >= 0 && board.get(row).get(column-1).getOwner() != node.getOwner() && board.get(row).get(column-1).getOwner() != '\0')
 		{
