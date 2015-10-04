@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 public class MinimaxSearch 
 {
-	public int numNodesExpanded = 0;
 	private Player blue,green;
 	public ArrayList<ArrayList<CandyNode>> board;
 	private boolean blueTurn;
 	
 	public char maxPlayer;
 	public char minPlayer;
+	public int numMoves = 0;
+	public long timeExpired = 0;
 	
 	public MinimaxSearch(Player blue, Player green, ArrayList<ArrayList<CandyNode>> board)
 	{
@@ -18,7 +19,6 @@ public class MinimaxSearch
 		this.green = green;
 		this.board = board;
 		this.blueTurn = true;
-		this.numNodesExpanded = 0;
 	}
 	
 	public ArrayList<ArrayList<CandyNode>> depthLimitedSearch(int depth)
@@ -37,7 +37,12 @@ public class MinimaxSearch
 				maxPlayer = green.getName();
 				minPlayer = blue.getName();
 			}
+			long beginningTime = System.currentTimeMillis();
 			CandyNode decision = minimaxDecision(boardState,depth);
+			long endTime = System.currentTimeMillis();
+			timeExpired += endTime - beginningTime;
+			
+			numMoves++;
 			System.out.println(maxPlayer + ": drop at " + (char)((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
 			
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);

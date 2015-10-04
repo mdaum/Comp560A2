@@ -16,12 +16,14 @@ public class Main
 		Player blue = new Player('B');
 		Player green = new Player('G');
 		MinimaxSearch victory = new MinimaxSearch(blue,green,board);
-		victory.depthLimitedSearch(2);
+		victory.depthLimitedSearch(3);
 		printBoard(board);
 		System.out.println("Blue's score is: " +blue.getTotalScore());
 		System.out.println("Green's score is: " + green.getTotalScore());
 		System.out.println("Number of nodes expanded by Blue is " + blue.numNodesExpanded);
 		System.out.println("Number of nodes expanded by Green is " + green.numNodesExpanded);
+		System.out.println("Average number of nodes expanded per move is " + ((double)(blue.numNodesExpanded + green.numNodesExpanded))/(double)(victory.numMoves));
+		System.out.println("Average number of time taken per move is " + (double)(victory.timeExpired/1000)/(double)(victory.numMoves) + " seconds");
 		/*while(!victory.gameOver(board))
 		{
 		in.next();
