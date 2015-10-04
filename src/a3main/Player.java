@@ -4,11 +4,13 @@ public class Player
 {
 	private int totalScore;
 	private char name;
+	public int numNodesExpanded;
 	
 	public Player(char name)
 	{
 		this.name = name;
 		totalScore = 0;
+		this.numNodesExpanded = 0;
 	}
 	
 	public void incrementScore(int amount)

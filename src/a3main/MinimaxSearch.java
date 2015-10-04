@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class MinimaxSearch 
 {
-	public int count = 0;
+	public int numNodesExpanded = 0;
 	private Player blue,green;
 	public ArrayList<ArrayList<CandyNode>> board;
 	private boolean blueTurn;
@@ -18,6 +18,7 @@ public class MinimaxSearch
 		this.green = green;
 		this.board = board;
 		this.blueTurn = true;
+		this.numNodesExpanded = 0;
 	}
 	
 	public ArrayList<ArrayList<CandyNode>> depthLimitedSearch(int depth)
@@ -86,6 +87,14 @@ public class MinimaxSearch
 			for(int j = 0;j < board.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
+				if(maxPlayer == blue.getName())
+				{
+					blue.numNodesExpanded++;
+				}
+				else
+				{
+					green.numNodesExpanded++;
+				}
 				if(action.getOwner() == '\0')
 				{
 					ArrayList<ArrayList<CandyNode>> nextBoardState = deepCloneBoard(boardState);
@@ -117,8 +126,6 @@ public class MinimaxSearch
 		{
 			return estimatedUtility(boardState);
 		}
-		count++;
-		//System.out.println(count);
 		
 		int maxVal = Integer.MIN_VALUE;
 		int nextDepth = depth-1;
@@ -127,6 +134,14 @@ public class MinimaxSearch
 			for(int j = 0;j < boardState.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
+				if(maxPlayer == blue.getName())
+				{
+					blue.numNodesExpanded++;
+				}
+				else
+				{
+					green.numNodesExpanded++;
+				}
 				if(action.getOwner() == '\0')
 				{
 					ArrayList<ArrayList<CandyNode>> nextBoardState = deepCloneBoard(boardState);
@@ -153,9 +168,6 @@ public class MinimaxSearch
 			return estimatedUtility(boardState);
 		}
 		
-		count++;
-		//System.out.println(count);
-		
 		int minVal = Integer.MAX_VALUE;
 		int nextDepth = depth-1;
 		for(int i = 0;i < boardState.size();i++)
@@ -163,6 +175,14 @@ public class MinimaxSearch
 			for(int j = 0;j < boardState.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
+				if(minPlayer == blue.getName())
+				{
+					blue.numNodesExpanded++;
+				}
+				else
+				{
+					green.numNodesExpanded++;
+				}
 				if(action.getOwner() == '\0')
 				{
 					ArrayList<ArrayList<CandyNode>> nextBoardState = deepCloneBoard(boardState);

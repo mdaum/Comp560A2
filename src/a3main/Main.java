@@ -20,6 +20,8 @@ public class Main
 		printBoard(board);
 		System.out.println("Blue's score is: " +blue.getTotalScore());
 		System.out.println("Green's score is: " + green.getTotalScore());
+		System.out.println("Number of nodes expanded by Blue is " + blue.numNodesExpanded);
+		System.out.println("Number of nodes expanded by Green is " + green.numNodesExpanded);
 		/*while(!victory.gameOver(board))
 		{
 		in.next();
