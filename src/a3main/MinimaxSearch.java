@@ -42,6 +42,8 @@ public class MinimaxSearch
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
 			blueTurn = !blueTurn;
 		}
+		blue.setTotalScore(calculateScore(blue.getName()));
+		green.setTotalScore(calculateScore(green.getName()));
 		return null;
 	}
 	
@@ -323,5 +325,21 @@ public class MinimaxSearch
 		{
 			board.get(row+1).get(column).setOwner(node.getOwner());
 		}
+	}
+	
+	public int calculateScore(char name)
+	{
+		int sum = 0;
+		for(int i = 0;i < board.size();i++)
+		{
+			for(int j = 0;j < board.get(0).size();j++)
+			{
+				if(board.get(i).get(j).getOwner() == name)
+				{
+					sum += board.get(i).get(j).getValue();
+				}
+			}
+		}
+		return sum;
 	}
 }

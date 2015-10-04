@@ -13,9 +13,13 @@ public class Main
 		Scanner in = new Scanner(System.in);
 		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
 		printBoard(board);
-		MinimaxSearch victory = new MinimaxSearch(new Player('B'),new Player('G'),board);
+		Player blue = new Player('B');
+		Player green = new Player('G');
+		MinimaxSearch victory = new MinimaxSearch(blue,green,board);
 		victory.depthLimitedSearch(2);
 		printBoard(board);
+		System.out.println("Blue's score is: " +blue.getTotalScore());
+		System.out.println("Green's score is: " + green.getTotalScore());
 		/*while(!victory.gameOver(board))
 		{
 		in.next();
