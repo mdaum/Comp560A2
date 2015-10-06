@@ -15,7 +15,7 @@ public class MinimaxSearch
 	
 	public MinimaxSearch(Player blue, Player green, ArrayList<ArrayList<CandyNode>> board)
 	{
-		this.blue = blue;
+		this.setBlue(blue);
 		this.green = green;
 		this.board = board;
 		this.blueTurn = true;
@@ -29,13 +29,13 @@ public class MinimaxSearch
 			ArrayList<ArrayList<CandyNode>> boardState = deepCloneBoard(board);
 			if(blueTurn)
 			{
-				maxPlayer = blue.getName();
+				maxPlayer = getBlue().getName();
 				minPlayer = green.getName();
 			}
 			else
 			{
 				maxPlayer = green.getName();
-				minPlayer = blue.getName();
+				minPlayer = getBlue().getName();
 			}
 			long beginningTime = System.currentTimeMillis();
 			CandyNode decision = minimaxDecision(boardState,depth);
@@ -46,29 +46,50 @@ public class MinimaxSearch
 			System.out.println(maxPlayer + ": drop at " + (char)((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
 			
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
+			if(adjacentFriendlyCandy(board,board.get(decision.getRow()).get(decision.getColumn())))
+			{
+				//System.out.println("Infecting...");
+				infectEnemyCandy(board,board.get(decision.getRow()).get(decision.getColumn()));
+			}
 			blueTurn = !blueTurn;
+			//Main.printBoard(board);
 		}
-		blue.setTotalScore(calculateScore(blue.getName()));
+		getBlue().setTotalScore(calculateScore(getBlue().getName()));
 		green.setTotalScore(calculateScore(green.getName()));
 		return null;
 	}
 	
+	public void playOneMoveAgainstOtherAgent(int depth){
+		ArrayList<ArrayList<CandyNode>> boardState = deepCloneBoard(board);
+		CandyNode decision = minimaxDecision(boardState,depth);
+		System.out.println(maxPlayer + ": drop at " + (char)((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
+		if(decision != null)
+		{
+			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
+			if(adjacentFriendlyCandy(board,board.get(decision.getRow()).get(decision.getColumn())))
+			{
+				//System.out.println("Infecting...");
+				infectEnemyCandy(board,board.get(decision.getRow()).get(decision.getColumn()));
+			}
+		}
+	}
+	
 	public void playOneMove(int depth)
 	{
-		System.out.println("Entering search...");
+		//System.out.println("Entering search...");
 		ArrayList<ArrayList<CandyNode>> boardState = deepCloneBoard(board);
 		if(blueTurn)
 		{
-			maxPlayer = blue.getName();
+			maxPlayer = getBlue().getName();
 			minPlayer = green.getName();
 		}
 		else
 		{
 			maxPlayer = green.getName();
-			minPlayer = blue.getName();
+			minPlayer = getBlue().getName();
 		}
 		CandyNode decision = minimaxDecision(boardState,depth);
-		System.out.println(maxPlayer + ": drop at " + ((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
+		//System.out.println(maxPlayer + ": drop at " + ((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
 		if(decision != null)
 		{
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
@@ -92,9 +113,9 @@ public class MinimaxSearch
 			for(int j = 0;j < board.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
-				if(maxPlayer == blue.getName())
+				if(maxPlayer == getBlue().getName())
 				{
-					blue.numNodesExpanded++;
+					getBlue().numNodesExpanded++;
 				}
 				else
 				{
@@ -139,9 +160,9 @@ public class MinimaxSearch
 			for(int j = 0;j < boardState.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
-				if(maxPlayer == blue.getName())
+				if(maxPlayer == getBlue().getName())
 				{
-					blue.numNodesExpanded++;
+					getBlue().numNodesExpanded++;
 				}
 				else
 				{
@@ -180,9 +201,9 @@ public class MinimaxSearch
 			for(int j = 0;j < boardState.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
-				if(minPlayer == blue.getName())
+				if(maxPlayer == getBlue().getName())
 				{
-					blue.numNodesExpanded++;
+					getBlue().numNodesExpanded++;
 				}
 				else
 				{
@@ -456,5 +477,13 @@ public class MinimaxSearch
 			}
 		}
 		return sum;
+	}
+
+	public Player getBlue() {
+		return blue;
+	}
+
+	public void setBlue(Player blue) {
+		this.blue = blue;
 	}
 }

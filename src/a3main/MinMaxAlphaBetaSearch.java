@@ -18,7 +18,7 @@ public class MinMaxAlphaBetaSearch
 	public MinMaxAlphaBetaSearch(Player blue, Player green, ArrayList<ArrayList<CandyNode>> board)
 	{
 		this.blue = blue;
-		this.green = green;
+		this.setGreen(green);
 		this.board = board;
 		this.blueTurn = true;
 		this.numNodesExpanded = 0;
@@ -33,11 +33,11 @@ public class MinMaxAlphaBetaSearch
 			if(blueTurn)
 			{
 				maxPlayer = blue.getName();
-				minPlayer = green.getName();
+				minPlayer = getGreen().getName();
 			}
 			else
 			{
-				maxPlayer = green.getName();
+				maxPlayer = getGreen().getName();
 				minPlayer = blue.getName();
 			}
 			long beginningTime = System.currentTimeMillis();
@@ -49,11 +49,33 @@ public class MinMaxAlphaBetaSearch
 			System.out.println(maxPlayer + ": drop at " + (char)((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
 			
 			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
+			if(adjacentFriendlyCandy(board,board.get(decision.getRow()).get(decision.getColumn())))
+			{
+				//System.out.println("Infecting...");
+				infectEnemyCandy(board,board.get(decision.getRow()).get(decision.getColumn()));
+			}
 			blueTurn = !blueTurn;
 		}
 		blue.setTotalScore(calculateScore(blue.getName()));
-		green.setTotalScore(calculateScore(green.getName()));
+		getGreen().setTotalScore(calculateScore(getGreen().getName()));
 		return null;
+	}
+	
+	public void playOneMoveAgainstOtherAgent(int depth)
+	{
+		ArrayList<ArrayList<CandyNode>> boardState = deepCloneBoard(board);
+		CandyNode decision = minimaxDecision(boardState,depth);
+		System.out.println(maxPlayer + ": drop at " + (char)((Integer.toString(decision.getColumn()).charAt(0)) + 17) + "" + decision.getRow());
+		//System.out.println("Decision to make move at " + decision.getColumn() + " , " + decision.getRow());
+		if(decision != null)
+		{
+			board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
+			if(adjacentFriendlyCandy(board,board.get(decision.getRow()).get(decision.getColumn())))
+			{
+				//System.out.println("Infecting...");
+				infectEnemyCandy(board,board.get(decision.getRow()).get(decision.getColumn()));
+			}
+		}
 	}
 	
 	public void playOneMove(int depth)
@@ -63,11 +85,11 @@ public class MinMaxAlphaBetaSearch
 		if(blueTurn)
 		{
 			maxPlayer = blue.getName();
-			minPlayer = green.getName();
+			minPlayer = getGreen().getName();
 		}
 		else
 		{
-			maxPlayer = green.getName();
+			maxPlayer = getGreen().getName();
 			minPlayer = blue.getName();
 		}
 		CandyNode decision = minimaxDecision(boardState,depth);
@@ -89,7 +111,7 @@ public class MinMaxAlphaBetaSearch
 	{
 		int alpha=Integer.MIN_VALUE;
 		int beta=Integer.MAX_VALUE;
-		System.out.println(maxPlayer);
+		//System.out.println(maxPlayer);
 		CandyNode chosenOne = null;
 
 		int maxVal = Integer.MIN_VALUE;
@@ -104,7 +126,7 @@ public class MinMaxAlphaBetaSearch
 				}
 				else
 				{
-					green.numNodesExpanded++;
+					getGreen().numNodesExpanded++;
 				}
 				if(action.getOwner() == '\0')
 				{
@@ -155,7 +177,7 @@ public class MinMaxAlphaBetaSearch
 				}
 				else
 				{
-					green.numNodesExpanded++;
+					getGreen().numNodesExpanded++;
 				}
 				if(action.getOwner() == '\0')
 				{
@@ -195,13 +217,13 @@ public class MinMaxAlphaBetaSearch
 			for(int j = 0;j < boardState.get(0).size();j++)
 			{
 				CandyNode action = boardState.get(i).get(j);
-				if(minPlayer == blue.getName())
+				if(maxPlayer == blue.getName())
 				{
 					blue.numNodesExpanded++;
 				}
 				else
 				{
-					green.numNodesExpanded++;
+					getGreen().numNodesExpanded++;
 				}
 				if(action.getOwner() == '\0')
 				{
@@ -257,6 +279,7 @@ public class MinMaxAlphaBetaSearch
 				{
 					utility -= boardState.get(i).get(j).getValue();
 				}
+				//if(boardState.get(i).get(j).getOwner()=='\0') utility+=infectionValue(boardState,boardState.get(i).get(j));
 			}
 		}
 		return utility;
@@ -430,6 +453,9 @@ public class MinMaxAlphaBetaSearch
 		}
 	}
 	
+	//modified this to take into account the total value of potential infection areas
+	//before, it was only taking into account weaknesses induced by new infection areas 
+	//and erroneously assumed any adjacent square without a maxPlayer candy had an enemy candy in it
 	public int infectionValue(ArrayList<ArrayList<CandyNode>> boardState, CandyNode node){
 		int curr=0;
 		int row=node.getRow();
@@ -438,22 +464,26 @@ public class MinMaxAlphaBetaSearch
 			if(column - 1 >= 0 && board.get(row).get(column-1).getOwner() != '\0')
 			{
 				if(board.get(row).get(column-1).getOwner()==maxPlayer)curr-=board.get(row).get(column-1).getValue();
-				else curr+=board.get(row).get(column-1).getValue();
+				if(board.get(row).get(column-1).getOwner()==minPlayer)curr+=board.get(row).get(column-1).getValue();
+				//else curr+=board.get(row).get(column-1).getValue();
 			}
 			if(column + 1 < board.get(0).size() && board.get(row).get(column+1).getOwner() != '\0')
 			{
 				if(board.get(row).get(column+1).getOwner()==maxPlayer)curr-=board.get(row).get(column+1).getValue();
-				else curr+=board.get(row).get(column+1).getValue();
+				if(board.get(row).get(column+1).getOwner()==minPlayer)curr+=board.get(row).get(column+1).getValue();
+				//else curr+=board.get(row).get(column+1).getValue();
 			}
 			if(row-1 >= 0 &&  board.get(row-1).get(column).getOwner() != '\0')
 			{
 				if(board.get(row-1).get(column).getOwner()==maxPlayer)curr-=board.get(row-1).get(column).getValue();
-				else curr+=board.get(row-1).get(column).getValue();
+				if(board.get(row-1).get(column).getOwner()==minPlayer)curr+=board.get(row-1).get(column).getValue();
+				//else curr+=board.get(row-1).get(column).getValue();
 			}
 			if(row + 1 < board.size() && board.get(row+1).get(column).getOwner() != '\0')
 			{
 				if(board.get(row+1).get(column).getOwner()==maxPlayer)curr-=board.get(row+1).get(column).getValue();
-				else curr+=board.get(row+1).get(column).getValue();
+				if(board.get(row+1).get(column).getOwner()==minPlayer)curr+=board.get(row+1).get(column).getValue();
+				//else curr+=board.get(row+1).get(column).getValue();
 			}
 		}
 		return curr;
@@ -473,5 +503,13 @@ public class MinMaxAlphaBetaSearch
 			}
 		}
 		return sum;
+	}
+
+	public Player getGreen() {
+		return green;
+	}
+
+	public void setGreen(Player green) {
+		this.green = green;
 	}
 }
