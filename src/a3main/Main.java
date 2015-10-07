@@ -45,7 +45,7 @@ public class Main
 		System.out.println("Average number of nodes expanded per move is " + ((double)(trueblue.numNodesExpanded + truegreen.numNodesExpanded))/(double)(trueVictory.numMoves));
 		System.out.println("Average number of time taken per move is " + (double)(trueVictory.timeExpired)/(double)(trueVictory.numMoves) + " milliseconds");
 		//MINIMAX VS. ALPHA-BETA//////////////////////////////////////////////////////////////////////////////
-		System.out.println("Minimax at depth "+(minimaxDepth+1)+" versus Alpha Beta at depth "+(alphabetaDepth+1));
+		System.out.println("Minimax(blue) at depth "+(minimaxDepth+1)+" versus Alpha Beta(green) at depth "+(alphabetaDepth+1));
 		printBoard(mmabBoard);
 		System.out.println("Entering search...");
 		Player blueMMFirst = new Player('B');
@@ -79,7 +79,7 @@ public class Main
 		System.out.println("Average time per turn by Blue is "+(blueMMTime/(long)16)+" milliseconds");
 		System.out.println("Average time per turn by Green is "+(greenABTime/(long)16)+" milliseconds");
 		//ALPHA-BETA VS. MINIMAX//////////////////////////////////////////////////////////////////////////////
-		System.out.println("Alpha Beta at depth "+(alphabetaDepth+1)+" versus Minimax at depth "+(minimaxDepth+1));
+		System.out.println("Alpha Beta(blue) at depth "+(alphabetaDepth+1)+" versus Minimax(green) at depth "+(minimaxDepth+1));
 		printBoard(abmmBoard);
 		System.out.println("Entering search...");
 		Player blueABFirst = new Player('B');
