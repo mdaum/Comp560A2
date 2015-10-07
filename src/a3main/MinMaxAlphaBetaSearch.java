@@ -284,26 +284,7 @@ public class MinMaxAlphaBetaSearch
 		}
 		return utility;
 	}
-	/*public int estimatedUtility(ArrayList<ArrayList<CandyNode>> boardState)
-	{
-		int utility = 0;
-		for(int i = 0;i < boardState.size();i++)
-		{
-			for(int j = 0;j < boardState.get(0).size();j++)
-			{
-				if(boardState.get(i).get(j).getOwner() == maxPlayer)
-				{
-					utility += boardState.get(i).get(j).getValue();
-				}
-				if(boardState.get(i).get(j).getOwner() == minPlayer)
-				{
-					utility -= boardState.get(i).get(j).getValue();
-				}
-				if(boardState.get(i).get(j).getOwner()=='\0') utility+=infectionValue(boardState,boardState.get(i).get(j));
-			}
-		}
-		return utility;
-	}*/
+
 	
 	public ArrayList<ArrayList<CandyNode>> deepCloneBoard(ArrayList<ArrayList<CandyNode>> board)
 	{
