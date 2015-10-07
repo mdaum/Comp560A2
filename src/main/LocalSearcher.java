@@ -33,8 +33,8 @@ public class LocalSearcher {
 				}
 			}
 			runs++;
-			System.out.println();
-			Runner.printGrid(board);
+			//System.out.println();
+			//Runner.printGrid(board);
 			conflictF.remove(chosenOne);
 			chosenOne.value='E';//to make sure that this friend doesn't conflict with itself
 			for(int i=0;i<board.length;i++){

@@ -16,8 +16,13 @@ public class Runner {
 		randomlyInsertFriends(board);
 		forestSquare[][] board2=deepclone(board);
 		forestSquare[][] board3 =deepclone(board);
-		forestSquare[] friends2 = deepFriends(friends);
-		forestSquare[] friends3 = deepFriends(friends);
+		//DO NOT DEEPFRIENDS()
+		forestSquare[] friends2 = new forestSquare[friends.length];//deepFriends(friends);
+		forestSquare[] friends3 = new forestSquare[friends.length];//deepFriends(friends);
+		for(int i=0;i<friends.length;i++){
+			friends2[i]=board2[friends[i].row][friends[i].col];
+			friends3[i]=board3[friends[i].row][friends[i].col];
+		}
 		printGrid(board);
 		System.out.println();
 		System.out.println("Choosing Friends to move in random manner");
@@ -25,17 +30,22 @@ public class Runner {
 		LocalSearcher L= new LocalSearcher(board,friends);
 		L.searchRand();
 		printGrid(L.board);
+		//this gets stuck
 		System.out.println();
 		System.out.println("Choosing Friends to move in min-conflict-first manner");
 		System.out.println();
+		///////////////////////
+		//randomlyInsertFriends(board2);
 		LocalSearcher L2=new LocalSearcher(board2,friends2);
 		L2.searchMin();
 		printGrid(L2.board);
+		//this also gets stuck
 		System.out.println();
 		System.out.println("Choosing Friends to move in max-conflict-first manner");
 		System.out.println();
+		//randomlyInsertFriends(board3);
 		LocalSearcher L3=new LocalSearcher(board3,friends3);
-		L3.searchMin();
+		L3.searchMax();
 		printGrid(L3.board);
 		
 		
