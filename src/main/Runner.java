@@ -6,7 +6,7 @@ public class Runner {
 	static forestSquare[] friends;
 	public static void main(String[] args) { //imagine we can condition on which problem they do and pipe in corresponding parsing....
 		HideSeekParser MaxWritesThis = new HideSeekParser();
-		forestSquare[][] board = MaxWritesThis.makeBoard("sampleForest3.txt");
+		forestSquare[][] board = MaxWritesThis.makeBoard(args[0]);
 		//System.out.println("made board");
 		friends=new forestSquare[board.length];
 		//printGrid(board);
