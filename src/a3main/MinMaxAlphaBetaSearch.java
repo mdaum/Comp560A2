@@ -434,14 +434,42 @@ public class MinMaxAlphaBetaSearch
 		}
 	}
 	
-	//modified this to take into account the total value of potential infection areas
-	//before, it was only taking into account weaknesses induced by new infection areas 
-	//and erroneously assumed any adjacent square without a maxPlayer candy had an enemy candy in it
+	public boolean isInfectionArea(ArrayList<ArrayList<CandyNode>> board, CandyNode node){
+		int row = node.getRow();
+		int col = node.getColumn();
+		boolean hasAdjacentMaxCandy=false,hasAdjacentMinCandy=false;
+		if(row>0){
+			if(board.get(row-1).get(col).getOwner()==maxPlayer)
+				hasAdjacentMaxCandy=true;
+			else if(board.get(row-1).get(col).getOwner()==minPlayer)
+				hasAdjacentMinCandy=true;
+		}
+		if(row<board.size()-1){
+			if(board.get(row+1).get(col).getOwner()==maxPlayer)
+				hasAdjacentMaxCandy=true;
+			else if(board.get(row+1).get(col).getOwner()==minPlayer)
+				hasAdjacentMinCandy=true;
+		}
+		if(col>0){
+			if(board.get(row).get(col-1).getOwner()==maxPlayer)
+				hasAdjacentMaxCandy=true;
+			else if(board.get(row).get(col-1).getOwner()==minPlayer)
+				hasAdjacentMinCandy=true;
+		}
+		if(col<board.size()-1){
+			if(board.get(row).get(col+1).getOwner()==maxPlayer)
+				hasAdjacentMaxCandy=true;
+			else if(board.get(row).get(col+1).getOwner()==minPlayer)
+				hasAdjacentMinCandy=true;
+		}
+		return hasAdjacentMaxCandy && hasAdjacentMinCandy;
+	}
+	
 	public int infectionValue(ArrayList<ArrayList<CandyNode>> boardState, CandyNode node){
 		int curr=0;
 		int row=node.getRow();
 		int column = node.getColumn();
-		if(adjacentFriendlyCandy(boardState,node)&&adjacentEnemyCandy(boardState,node)){
+		if(isInfectionArea(boardState,node)){
 			if(column - 1 >= 0 && board.get(row).get(column-1).getOwner() != '\0')
 			{
 				if(board.get(row).get(column-1).getOwner()==maxPlayer)curr-=board.get(row).get(column-1).getValue();

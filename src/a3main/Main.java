@@ -11,7 +11,7 @@ public class Main
 	{
 		int minimaxDepth = 2; //really this +1
 		int alphabetaDepth = 4; //really this +1
-		final String fileName = "Mounds.txt";
+		final String fileName = "ReesesPieces.txt";
 		Scanner in = new Scanner(System.in);
 		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
 		System.out.println("Regular Minimax Search at depth "+(minimaxDepth+1)+":");
