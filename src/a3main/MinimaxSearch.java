@@ -19,6 +19,7 @@ public class MinimaxSearch
 		this.green = green;
 		this.board = board;
 		this.blueTurn = true;
+		this.maxPlayer = blue.getName();
 	}
 	
 	public ArrayList<ArrayList<CandyNode>> depthLimitedSearch(int depth)
@@ -102,7 +103,18 @@ public class MinimaxSearch
 		blueTurn = !blueTurn;
 	}
 
-	
+	public void makeMove(ArrayList<ArrayList<CandyNode>> board,CandyNode decision)
+	{
+		char tmp = maxPlayer;
+		maxPlayer = green.getName();
+		board.get(decision.getRow()).get(decision.getColumn()).setOwner(maxPlayer);
+		if(adjacentFriendlyCandy(board,board.get(decision.getRow()).get(decision.getColumn())))
+		{
+			System.out.println("Infecting...");
+			infectEnemyCandy(board,board.get(decision.getRow()).get(decision.getColumn()));
+		}
+		maxPlayer = tmp;
+	}
 	public CandyNode minimaxDecision(ArrayList<ArrayList<CandyNode>> boardState,int depth)
 	{
 		CandyNode chosenOne = null;
@@ -291,10 +303,10 @@ public class MinimaxSearch
 	public ArrayList<ArrayList<CandyNode>> deepCloneBoard(ArrayList<ArrayList<CandyNode>> board)
 	{
 		ArrayList<ArrayList<CandyNode>> cloneBoard = new ArrayList<ArrayList<CandyNode>>();
-		for(int i = 0;i < 6;i++)
+		for(int i = 0;i < board.size();i++)
 		{
 			cloneBoard.add(new ArrayList<CandyNode>());
-			for(int j = 0;j < 6;j++)
+			for(int j = 0;j < board.get(0).size();j++)
 			{
 				int value = board.get(i).get(j).getValue();
 				char owner = board.get(i).get(j).getOwner();
@@ -485,5 +497,8 @@ public class MinimaxSearch
 
 	public void setBlue(Player blue) {
 		this.blue = blue;
+	}
+	public Player getGreen() {
+		return green;
 	}
 }

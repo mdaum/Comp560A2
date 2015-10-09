@@ -9,11 +9,30 @@ public class Main
 	
 	public static void main(String args[])
 	{
+		int boardSize = 6;
 		int minimaxDepth = 2; //really this +1
 		int alphabetaDepth = 4; //really this +1
-		final String fileName = "ReesesPieces.txt";
+		String fileName = "ReesesPieces.txt";
+		if(args.length > 0)
+		{
+			minimaxDepth = Integer.parseInt(args[0])-1;
+		}
+		
+		if(args.length > 1)
+		{
+			alphabetaDepth = Integer.parseInt(args[1])-1;
+		}
+		
+		if(args.length > 2)
+		{
+			fileName = args[2];
+		}
+		
+		if(args.length <= 3)
+		{
+		
 		Scanner in = new Scanner(System.in);
-		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName);
+		ArrayList<ArrayList<CandyNode>> board = parseFile(fileName,boardSize);
 		System.out.println("Regular Minimax Search at depth "+(minimaxDepth+1)+":");
 		printBoard(board);
 		Player blue = new Player('B');
@@ -135,9 +154,137 @@ public class Main
 		printBoard(board);
 		System.out.println(board.get(5).get(5).getOwner());
 		}*/
+		
+		}
+		if(args.length == 4)
+		{
+			boardSize = Integer.parseInt(args[3]);
+			ArrayList<ArrayList<CandyNode>> board = makeBoardOfSize(boardSize);
+			System.out.println("Regular Minimax Search at depth "+(minimaxDepth+1)+":");
+			printBoard(board);
+			Player blue = new Player('B');
+			Player green = new Player('G');
+			Player trueblue = new Player('B');
+			Player truegreen = new Player('G');
+			MinimaxSearch victory = new MinimaxSearch(blue,green,board);
+			ArrayList<ArrayList<CandyNode>> trueboard = victory.deepCloneBoard(board);
+			//we need copies of the board for minimax vs alpha-beta and vice versa
+			ArrayList<ArrayList<CandyNode>> mmabBoard = victory.deepCloneBoard(board);
+			ArrayList<ArrayList<CandyNode>> abmmBoard = victory.deepCloneBoard(board);
+			MinMaxAlphaBetaSearch trueVictory = new MinMaxAlphaBetaSearch(trueblue,truegreen,trueboard);
+			victory.depthLimitedSearch(minimaxDepth);
+			printBoard(board);
+			System.out.println("Blue's score is: " +blue.getTotalScore());
+			System.out.println("Green's score is: " + green.getTotalScore());
+			System.out.println("Number of nodes expanded by Blue is " + blue.numNodesExpanded);
+			System.out.println("Number of nodes expanded by Green is " + green.numNodesExpanded);
+			System.out.println("Average number of nodes expanded per move is " + ((double)(blue.numNodesExpanded + green.numNodesExpanded))/(double)(victory.numMoves));
+			System.out.println("Average number of time taken per move is " + (double)(victory.timeExpired)/(double)(victory.numMoves) + " milliseconds");
+			System.out.println("Alpha Beta at depth "+(alphabetaDepth+1)+":");
+			printBoard(trueboard);
+			trueVictory.depthLimitedSearch(alphabetaDepth);
+			printBoard(trueboard);
+			System.out.println("Blue's score is: " +trueblue.getTotalScore());
+			System.out.println("Green's score is: " + truegreen.getTotalScore());
+			System.out.println("Number of nodes expanded by Blue is " + trueblue.numNodesExpanded);
+			System.out.println("Number of nodes expanded by Green is " + truegreen.numNodesExpanded);
+			System.out.println("Average number of nodes expanded per move is " + ((double)(trueblue.numNodesExpanded + truegreen.numNodesExpanded))/(double)(trueVictory.numMoves));
+			System.out.println("Average number of time taken per move is " + (double)(trueVictory.timeExpired)/(double)(trueVictory.numMoves) + " milliseconds");
+		}
+		if(args.length == 5)
+		{
+			if(args[4].equals("M"))
+			{
+			System.out.println("So you think you are good enough to battle our Computer Overlords?");
+			System.out.println("Enter each move using [column] [row] with one space between column and row, where column and row are integers");
+			System.out.println("You are the green player, your squares will be denoted by a G");
+			Scanner in = new Scanner(System.in);
+			ArrayList<ArrayList<CandyNode>> board = parseFile(fileName,boardSize);
+			printBoard(board);
+			Player blue = new Player('B');
+			Player green = new Player('G');
+			MinimaxSearch victory = new MinimaxSearch(blue,green,board);
+			ArrayList<ArrayList<CandyNode>> origBoard = victory.deepCloneBoard(board);
+			while(!victory.gameOver(board))
+			{
+				System.out.println("Enter any character to let the computer make its move");
+				in.next();
+				victory.playOneMoveAgainstOtherAgent(minimaxDepth);
+				printBoard(board);
+				if(!victory.gameOver(board))
+				{
+					System.out.println("For your convenience, here is the original board and point values:");
+					printBoard(origBoard);
+					System.out.println("Enter your move:");
+					int column = in.nextInt();
+					int row = in.nextInt();
+					victory.makeMove(board, board.get(row).get(column));
+					printBoard(board);
+				}
+			}
+			if(victory.calculateScore(victory.getBlue().getName()) > victory.calculateScore(victory.getGreen().getName()))
+			{
+				System.out.println("You lost!");
+				System.out.println("Final Score was:");
+				System.out.println("Blue: " + victory.calculateScore(victory.getBlue().getName()));
+				System.out.println("You: " + victory.calculateScore(victory.getGreen().getName()));
+			}
+			else
+			{
+				System.out.println("You won! (You win ties as well!)");
+				System.out.println("Final Score was:");
+				System.out.println("Blue: " + victory.calculateScore(victory.getBlue().getName()));
+				System.out.println("You: " + victory.calculateScore(victory.getGreen().getName()));
+			}
+			}
+			else if(args[4].equals("A"))
+			{
+				System.out.println("So you think you are good enough to battle our Computer Overlords?");
+				System.out.println("Enter each move using [column] [row] with one space between column and row, where column and row are integers");
+				System.out.println("You are the green player, your squares will be denoted by a G");
+				Scanner in = new Scanner(System.in);
+				ArrayList<ArrayList<CandyNode>> board = parseFile(fileName,boardSize);
+				printBoard(board);
+				Player blue = new Player('B');
+				Player green = new Player('G');
+				MinMaxAlphaBetaSearch victory = new MinMaxAlphaBetaSearch(blue,green,board);
+				ArrayList<ArrayList<CandyNode>> origBoard = victory.deepCloneBoard(board);
+				while(!victory.gameOver(board))
+				{
+					System.out.println("Enter any character to let the computer make its move");
+					in.next();
+					victory.playOneMoveAgainstOtherAgent(minimaxDepth);
+					printBoard(board);
+					if(!victory.gameOver(board))
+					{
+						System.out.println("For your convenience, here is the original board and point values:");
+						printBoard(origBoard);
+						System.out.println("Enter your move:");
+						int column = in.nextInt();
+						int row = in.nextInt();
+						victory.makeMove(board, board.get(row).get(column));
+						printBoard(board);
+					}
+				}
+				if(victory.calculateScore(victory.getBlue().getName()) > victory.calculateScore(victory.getGreen().getName()))
+				{
+					System.out.println("You lost!");
+					System.out.println("Final Score was:");
+					System.out.println("Blue: " + victory.calculateScore(victory.getBlue().getName()));
+					System.out.println("You: " + victory.calculateScore(victory.getGreen().getName()));
+				}
+				else
+				{
+					System.out.println("You won! (You win ties as well!)");
+					System.out.println("Final Score was:");
+					System.out.println("Blue: " + victory.calculateScore(victory.getBlue().getName()));
+					System.out.println("You: " + victory.calculateScore(victory.getGreen().getName()));
+				}
+			}
+		}
 	}
 	
-	public static ArrayList<ArrayList<CandyNode>> parseFile(String fileName)
+	public static ArrayList<ArrayList<CandyNode>> parseFile(String fileName, int size)
 	{
 		Scanner in = null;
 		try 
@@ -152,10 +299,10 @@ public class Main
 		
 		ArrayList<ArrayList<CandyNode>> board = new ArrayList<ArrayList<CandyNode>>();
 		
-		for(int i = 0;i < 6;i++)
+		for(int i = 0;i < size;i++)
 		{
 			board.add(new ArrayList<CandyNode>());
-			for(int j = 0;j < 6;j++)
+			for(int j = 0;j < size;j++)
 			{
 				int value = in.nextInt();
 				board.get(i).add(new CandyNode(i,j,value));
@@ -173,15 +320,30 @@ public class Main
 			{
 				if(board.get(i).get(j).getDisplayValue().length() == 2)
 				{
-					System.out.print(board.get(i).get(j).getDisplayValue() + " ");
+					System.out.print(board.get(i).get(j).getDisplayValue());
 				}
 				else
 				{
-					System.out.print(board.get(i).get(j).getDisplayValue() + "  ");
+					System.out.print(board.get(i).get(j).getDisplayValue() + " ");
 				}
+				System.out.print(" ");
 			}
 			System.out.println();
 		}
+	}
+	
+	public static ArrayList<ArrayList<CandyNode>> makeBoardOfSize(int size)
+	{
+		ArrayList<ArrayList<CandyNode>> board = new ArrayList<ArrayList<CandyNode>>();
+		for(int i = 0;i < size;i++)
+		{
+			board.add(new ArrayList<CandyNode>());
+			for(int j = 0;j < size;j++)
+			{
+				board.get(i).add(new CandyNode(i,j));
+			}
+		}
+		return board;
 	}
 
 }
